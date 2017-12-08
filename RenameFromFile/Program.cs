@@ -85,13 +85,13 @@ namespace RenameFromFile
                 {
                     if (File.Exists(f.oldFile))
                     {
-                        File.Move(f.oldFile, f.newFile);
+                        File.Copy(f.oldFile, f.newFile);
                     }
                 }
 
 
             }
-            else if(args.Count()==2 && (args[1]=="copy" || args[1]=="Copy"))
+            else if(args.Count()==2)
             {
                 string filepath = args[0];
 
@@ -109,7 +109,7 @@ namespace RenameFromFile
                 {
                     if (File.Exists(f.oldFile))
                     {
-                        File.Copy(f.oldFile, f.newFile);
+                        File.Move(f.oldFile, f.newFile);
                     }
                 }
 
