@@ -9,13 +9,26 @@ namespace RenameFromFile
     class Program
     {
 
-      
+        public void CopyToNewName(string currentName, string futureName)
+        {
+            try
+            {
+                File.Copy(currentName, futureName);
+
+            }
+            catch
+            {
+
+            }
+
+        }
 
 
         public void Rename(string currentName, string futureName)
         {
             try
             {
+
                 File.Move(currentName, futureName);
             }
             catch
@@ -53,9 +66,8 @@ namespace RenameFromFile
             {
                 Console.WriteLine("Write filename that has the old and new names after the program name");
             }
-            else
+            else if (args.Count() ==1)
             {
-
 
                 string filepath = args[0];
 
@@ -74,6 +86,30 @@ namespace RenameFromFile
                     if (File.Exists(f.oldFile))
                     {
                         File.Move(f.oldFile, f.newFile);
+                    }
+                }
+
+
+            }
+            else if(args.Count()==2 && (args[1]=="copy" || args[1]=="Copy"))
+            {
+                string filepath = args[0];
+
+                var lines = File.ReadAllLines(filepath);
+
+                var data = from l in lines.Skip(1)
+                           let split = l.Split(';')
+                           select new OldNew
+                           {
+                               oldFile = split[0],
+                               newFile = split[1],
+                           };
+
+                foreach (var f in data)
+                {
+                    if (File.Exists(f.oldFile))
+                    {
+                        File.Copy(f.oldFile, f.newFile);
                     }
                 }
 
