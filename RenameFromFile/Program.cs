@@ -9,34 +9,7 @@ namespace RenameFromFile
     class Program
     {
 
-        public void CopyToNewName(string currentName, string futureName)
-        {
-            try
-            {
-                File.Copy(currentName, futureName);
 
-            }
-            catch
-            {
-
-            }
-
-        }
-
-
-        public void Rename(string currentName, string futureName)
-        {
-            try
-            {
-
-                File.Move(currentName, futureName);
-            }
-            catch
-            {
-
-            }
-
-        }
 
         static void Main(string[] args)
         {
@@ -75,18 +48,31 @@ namespace RenameFromFile
 
                 var data = from l in lines.Skip(1)
                            let split = l.Split(';')
+                           
                            select new OldNew
                            {
+                               
                                oldFile = split[0],
                                newFile = split[1],
                            };
-
+                
+                
                 foreach (var f in data)
                 {
-                    if (File.Exists(f.oldFile))
+                    
+                    if (File.Exists(f.oldFile) && f.oldFile!="")
                     {
-                        File.Copy(f.oldFile, f.newFile);
+                        if (File.Exists(f.newFile))
+                        {
+
+                        }
+                        else
+                        {
+                            File.Copy(f.oldFile, f.newFile);
+                        }
+                        
                     }
+
                 }
 
 
