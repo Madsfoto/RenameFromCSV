@@ -9,6 +9,9 @@ namespace RenameFromFile
     class Program
     {
 
+        // Improvement ideas:
+        // If the rename fails, write why
+        // If rename.csv is found in the directory, rename automatically via doubleclick
 
 
         static void Main(string[] args)
@@ -33,10 +36,14 @@ namespace RenameFromFile
             _43_3_2_black-hat-closeup.jpg 
             An additional image, black-hat-closeup.jpg, is attached to the variant with ID 3 of the product with ID 43. The image is shown with sort order 2.
             */
-
+            
             Program p = new Program();
             if (args.Count() == 0)
             {
+                if(File.Exists("Rename.csv"))
+                {
+
+                }
                 Console.WriteLine("Write filename that has the old and new names after the program name");
             }
             else if (args.Count() ==1)
@@ -48,14 +55,11 @@ namespace RenameFromFile
 
                 var data = from l in lines.Skip(1)
                            let split = l.Split(';')
-                           
                            select new OldNew
                            {
-                               
                                oldFile = split[0],
                                newFile = split[1],
                            };
-                
                 
                 foreach (var f in data)
                 {
@@ -64,11 +68,13 @@ namespace RenameFromFile
                     {
                         if (File.Exists(f.newFile))
                         {
-
+                            Console.WriteLine(f.newFile + " exists");
                         }
                         else
                         {
+                            
                             File.Copy(f.oldFile, f.newFile);
+                            Console.WriteLine(f.newFile + " created");
                         }
                         
                     }
@@ -81,42 +87,38 @@ namespace RenameFromFile
             {
                 string filepath = args[0];
 
-                var lines = File.ReadAllLines(filepath);
-
-                var data = from l in lines.Skip(1)
-                           let split = l.Split(';')
-                           select new OldNew
-                           {
-                               oldFile = split[0],
-                               newFile = split[1],
-                           };
-
-                foreach (var f in data)
-                {
-                    if (File.Exists(f.oldFile))
-                    {
-                        File.Move(f.oldFile, f.newFile);
-                    }
-                }
+                p.Rename(filepath);
 
             }
 
 
+        }
 
+        public void Rename(string filepath)
+        {
+            var lines = File.ReadAllLines(filepath);
 
+            var data = from l in lines.Skip(1)
+                       let split = l.Split(';')
+                       select new OldNew
+                       {
+                           oldFile = split[0],
+                           newFile = split[1],
+                       };
 
-
-
-
-
-
-
-
-
-
+            foreach (var f in data)
+            {
+                if (File.Exists(f.oldFile))
+                {
+                    File.Move(f.oldFile, f.newFile);
+                }
+            }
 
         }
     }
+
+    
+
 
     internal class OldNew
     {
