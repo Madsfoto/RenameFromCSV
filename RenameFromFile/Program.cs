@@ -1,8 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-
-
+using System.Threading;
 
 namespace RenameFromFile
 {
@@ -13,6 +12,7 @@ namespace RenameFromFile
         // If the rename fails, write why (Try 1 of fixing it, no promises made)
         // If rename.csv is found in the directory, rename automatically via doubleclick (should be done)
 
+        public int currentCount = 0;
 
         static void Main(string[] args)
         {
@@ -30,14 +30,19 @@ namespace RenameFromFile
                 if(File.Exists("Rename.csv"))
                 {
                     p.Rename("Rename.csv");
+                    Console.WriteLine("Executed rename.csv");
                 }
-                Console.WriteLine("Write filename that has the old and new names after the program name");
+                else
+                {
+                    Console.WriteLine("Write filename that has the old and new names after the program name");
+                }
+                
                 
             }
             else if (args.Count() ==1)
             {
                 string filepath = args[0];
-
+                Console.WriteLine("Executing "+filepath);
                 p.Rename(filepath);
 
             }
@@ -47,8 +52,9 @@ namespace RenameFromFile
         public void Rename(string filepath)
         {
             var lines = File.ReadAllLines(filepath);
+            var linecount = lines.Count();
 
-            var data = from l in lines.Skip(1)
+            var data = from l in lines.Skip(0)
                        let split = l.Split(';')
                        select new OldNew
                        {
@@ -56,6 +62,7 @@ namespace RenameFromFile
                            newFile = split[1],
                        };
 
+            Console.WriteLine("Renaming " + linecount + " files");
             foreach (var f in data)
             {
                 if (File.Exists(f.oldFile) && f.oldFile != "")
@@ -68,6 +75,7 @@ namespace RenameFromFile
                     {
                         File.Copy(f.oldFile, f.newFile);
                         Console.WriteLine(f.newFile + " created");
+                        Interlocked.Increment(ref currentCount);
                     }
 
                 }
@@ -75,6 +83,8 @@ namespace RenameFromFile
                 {
                     Console.WriteLine(f.oldFile + " does not exist");
                 }
+                // if last item, print currentCount
+                // Print errors as well
             }
 
         }
